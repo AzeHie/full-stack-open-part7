@@ -38,18 +38,18 @@ const App = () => {
     navigate('/');
   };
 
-  // const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
+  const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
 
-  // const vote = (id) => {
-  //   const anecdote = anecdoteById(id);
+  const vote = (id) => {
+    const anecdote = anecdoteById(Number(id));
 
-  //   const voted = {
-  //     ...anecdote,
-  //     votes: anecdote.votes + 1,
-  //   };
+    const voted = {
+      ...anecdote,
+      votes: anecdote.votes + 1,
+    };
 
-  //   setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
-  // };
+    setAnecdotes(anecdotes.map((a) => (a.id === Number(id) ? voted : a)));
+  };
 
   return (
     <Fragment>
@@ -61,7 +61,7 @@ const App = () => {
         <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route
           path='/anecdotes/:id'
-          element={<Anecdote anecdotes={anecdotes} />}
+          element={<Anecdote anecdotes={anecdotes} vote={vote} />}
         />
         <Route path='/create' element={<CreateNew addNew={addNew} />} />
         <Route path='/about' element={<About />} />
