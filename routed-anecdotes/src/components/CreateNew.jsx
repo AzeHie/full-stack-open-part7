@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import { useField } from '../hooks';
 
 const CreateNew = (props) => {
-  const content = useField('content');
-  const author = useField('author');
-  const info = useField('info');
+  const {fields: content, reset: resetContent } = useField('content');
+  const {fields: author, reset: resetAuthor } = useField('author');
+  const {fields: info, reset: resetInfo } = useField('info');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,6 +16,12 @@ const CreateNew = (props) => {
       votes: 0,
     });
   };
+
+  const handleReset = () => {
+    resetContent();
+    resetAuthor();
+    resetInfo();
+  }
 
   return (
     <div>
@@ -33,7 +39,8 @@ const CreateNew = (props) => {
           url for more info
           <input {...info} />
         </div>
-        <button>create</button>
+        <button type="submit">create</button>
+        <button type="button" onClick={handleReset}>reset</button>
       </form>
     </div>
   );
