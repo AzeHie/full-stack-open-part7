@@ -1,0 +1,19 @@
+.error,
+.success {
+  width: 50%;
+  background: rgb(201, 201, 201);
+  font-size: 25px;
+  text-align: center;
+  margin-bottom: 16px;
+  padding: 16px;
+}
+
+.error {
+  border: 2px solid rgb(255, 0, 0);
+  color: rgb(255, 0, 0);
+}
+
+.success {
+  border: 2px solid rgb(0, 128, 0);
+  color: rgb(0, 128, 0);
+}
