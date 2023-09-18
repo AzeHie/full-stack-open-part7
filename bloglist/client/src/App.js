@@ -1,23 +1,25 @@
 import { useState, useEffect, useRef, useContext } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
-import Blog from './components/Blog';
 import blogService from './services/blogs';
-import userService from './services/users';
+import { handleLogout } from './services/users';
+
 import NotificationContext from './shared/NotificationContext';
 
+import Blog from './components/Blog';
 import CreateBlog from './components/CreateBlog';
 import Notification from './shared/Notification';
 import Togglable from './shared/Togglable';
+import LoginForm from './components/LoginForm';
+
 import './App.css';
 
 const App = () => {
   const blogFormRef = useRef();
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [notification, notificationDispatch] = useContext(NotificationContext);
 
+  // create notification
   const newNotification = (message, styles) => {
     notificationDispatch({ type: 'MESSAGE', payload: message });
     notificationDispatch({ type: 'STYLES', payload: styles });
@@ -26,18 +28,15 @@ const App = () => {
     }, 3000);
   };
 
-  const fetchBlogs = async () => {
-    const loadedBlogs = await blogService.getAll();
+  // fetch blogs:
+  const { data: blogsQuery, refetch: refetchBlogs } = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll,
+  });
 
-    loadedBlogs.sort((a, b) => b.likes - a.likes);
+  const blogs = blogsQuery || [];
 
-    setBlogs(loadedBlogs);
-  };
-
-  useEffect(() => {
-    fetchBlogs();
-  }, []);
-
+  // user already logged in?
   useEffect(() => {
     const loggedUserJSON = localStorage.getItem('loggedUser');
     if (loggedUserJSON) {
@@ -46,36 +45,6 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
-
-  const handleLogin = async (event) => {
-    event.preventDefault();
-
-    try {
-      const userLogin = await userService.login(username, password);
-
-      localStorage.setItem('loggedUser', JSON.stringify(userLogin));
-
-      blogService.setToken(userLogin.token);
-      setUser(userLogin);
-      newNotification(
-        'Logged in!',
-        'success',
-      );
-      setPassword('');
-      setUsername('');
-    } catch (exception) {
-      newNotification(
-        'Failed to log in!',
-        'error',
-      );
-    }
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    localStorage.removeItem('loggedUser');
-    newNotification('Logged out!', 'success');
-  };
 
   const handleNewLike = async (blog) => {
     const newBlog = {
@@ -86,7 +55,7 @@ const App = () => {
 
     try {
       await blogService.editBlog(newBlog);
-      fetchBlogs();
+      refetchBlogs();
     } catch (exception) {
       newNotification('Failed to add new like!', 'error');
     }
@@ -101,7 +70,7 @@ const App = () => {
       try {
         await blogService.removeBlog(blog.id);
         newNotification('Blog removed Successfully', 'success');
-        fetchBlogs();
+        refetchBlogs();
       } catch (exception) {
         newNotification('Removing the blog failed!', 'error');
       }
@@ -111,7 +80,7 @@ const App = () => {
   const handleCreateBlog = async (newBlog) => {
     try {
       await blogService.createBlog(newBlog);
-      fetchBlogs();
+      refetchBlogs();
       newNotification('New blog created!', 'success');
     } catch (exception) {
       console.log(exception);
@@ -127,31 +96,7 @@ const App = () => {
           message={notification.message}
           styles={notification.styles}
         />
-        <form onSubmit={handleLogin}>
-          <div className='login__inputs'>
-            <label htmlFor='username'>Username:</label>
-            <input
-              type='text'
-              value={username}
-              name='username'
-              id='username'
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div className='login__inputs'>
-            <label htmlFor='password'>Password:</label>
-            <input
-              type='password'
-              value={password}
-              name='password'
-              id='password'
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type='submit' id='login-button'>
-            Login
-          </button>
-        </form>
+        <LoginForm setUser={setUser} newNotification={newNotification} />
       </div>
     );
   }
@@ -159,9 +104,12 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={notification.message} styles={notification.styles} />
+      <Notification
+        message={notification.message}
+        styles={notification.styles}
+      />
       <span>{user.name} logged in</span>
-      <button onClick={handleLogout}>Logout</button>
+      <button onClick={() => handleLogout(setUser, newNotification)}>Logout</button>
       <Togglable buttonLabel='Create blog' ref={blogFormRef}>
         <CreateBlog
           handleCreateBlog={handleCreateBlog}
