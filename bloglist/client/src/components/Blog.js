@@ -1,16 +1,25 @@
 import { Fragment, useState } from 'react';
 
 import './Blog.css';
+import BlogMutations from '../services/blogs';
 
-const Blog = ({ blog, user, handleNewLike, handleRemove }) => {
+const Blog = ({ blog, user, newNotification }) => {
   const [showDetails, setShowDetails] = useState(false);
 
+  const { handleNewLike, handleRemove } = BlogMutations();
+
   const newLike = () => {
-    handleNewLike(blog);
+    const newBlog = {
+      ...blog,
+      user: blog.user.id,
+      likes: blog.likes + 1,
+    };
+
+    handleNewLike(newBlog, newNotification);
   };
 
   const removeBlog = () => {
-    handleRemove(blog);
+    handleRemove(blog, newNotification);
   };
 
   const removeBtn =

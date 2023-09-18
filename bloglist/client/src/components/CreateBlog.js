@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './CreateBlog.css';
 import BlogMutations from '../services/blogs';
 
-const CreateBlog = ({ newNotification, refetchBlogs, toggleVisibility }) => {
+const CreateBlog = ({ newNotification, toggleVisibility }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
@@ -19,7 +19,7 @@ const CreateBlog = ({ newNotification, refetchBlogs, toggleVisibility }) => {
       url,
     };
 
-    handleCreateBlog(newBlog, newNotification, refetchBlogs);
+    handleCreateBlog(newBlog, newNotification);
     toggleVisibility();
     setTitle('');
     setAuthor('');
@@ -62,7 +62,6 @@ const CreateBlog = ({ newNotification, refetchBlogs, toggleVisibility }) => {
 
 CreateBlog.propTypes = {
   newNotification: PropTypes.func.isRequired,
-  refetchBlogs: PropTypes.func.isRequired,
   toggleVisibility: PropTypes.func.isRequired,
 };
 

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import blogService, { getAll, setToken } from './services/blogs';
+import { getAll, setToken } from './services/blogs';
 import { handleLogout } from './services/users';
 
 import NotificationContext from './shared/NotificationContext';
@@ -29,7 +29,7 @@ const App = () => {
   };
 
   // fetch blogs:
-  const { data: blogsQuery, refetch: refetchBlogs } = useQuery({
+  const { data: blogsQuery } = useQuery({
     queryKey: ['blogs'],
     queryFn: getAll,
   });
@@ -45,37 +45,6 @@ const App = () => {
       setToken(user.token);
     }
   }, []);
-
-  const handleNewLike = async (blog) => {
-    const newBlog = {
-      ...blog,
-      user: blog.user.id,
-      likes: blog.likes + 1,
-    };
-
-    try {
-      await blogService.editBlog(newBlog);
-      refetchBlogs();
-    } catch (exception) {
-      newNotification('Failed to add new like!', 'error');
-    }
-  };
-
-  const handleRemove = async (blog) => {
-    const confirmation = window.confirm(
-      `Are you sure you want to remove blog ${blog.title} by ${blog.author}`
-    );
-
-    if (confirmation) {
-      try {
-        await blogService.removeBlog(blog.id);
-        newNotification('Blog removed Successfully', 'success');
-        refetchBlogs();
-      } catch (exception) {
-        newNotification('Removing the blog failed!', 'error');
-      }
-    }
-  };
 
   if (!user) {
     return (
@@ -102,7 +71,6 @@ const App = () => {
       <Togglable buttonLabel='Create blog' ref={blogFormRef}>
         <CreateBlog
           newNotification={newNotification}
-          refetchBlogs={refetchBlogs}
           toggleVisibility={() => blogFormRef.current.toggleVisibility()}
         />
       </Togglable>
@@ -110,9 +78,8 @@ const App = () => {
         <Blog
           key={blog.id}
           blog={blog}
-          handleRemove={handleRemove}
-          handleNewLike={handleNewLike}
           user={user}
+          newNotification={newNotification}
         />
       ))}
     </div>

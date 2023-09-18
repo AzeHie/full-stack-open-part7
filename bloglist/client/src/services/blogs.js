@@ -26,7 +26,7 @@ const createBlog = async (newObject) => {
   return response.data;
 };
 
-export const editBlog = async (newBlog) => {
+const editBlog = async (newBlog) => {
   const response = await axios.put(
     `${baseUrl}/${newBlog.id}`,
     newBlog,
@@ -49,10 +49,21 @@ const BlogMutations = () => {
     },
   });
 
-  const handleCreateBlog = async (newBlog, newNotification, refetchBlogs) => {
+  const newLikeMutation = useMutation(editBlog, {
+    onSuccess: () => {
+      QueryClient.invalidateQueries({ queryKey: ['blogs'] });
+    }
+  });
+
+  const removeBlogMutation = useMutation(removeBlog, {
+    onSuccess: () => {
+      QueryClient.invalidateQueries({ queryKey: ['blogs'] });
+    }
+  });
+
+  const handleCreateBlog = async (newBlog, newNotification) => {
     try {
       newBlogMutation.mutate(newBlog);
-      refetchBlogs();
       newNotification('New blog created!', 'success');
     } catch (exception) {
       console.log(exception);
@@ -60,7 +71,30 @@ const BlogMutations = () => {
     }
   };
 
-  return { handleCreateBlog };
+  const handleNewLike = async (newBlog, newNotification) => {
+    try {
+      newLikeMutation.mutate(newBlog);
+    } catch (exception) {
+      newNotification('Failed to add new like!', 'error');
+    }
+  };
+
+  const handleRemove = async (blog, newNotification) => {
+    const confirmation = window.confirm(
+      `Are you sure you want to remove blog ${blog.title} by ${blog.author}`
+    );
+
+    if (confirmation) {
+      try {
+        removeBlogMutation.mutate(blog.id);
+        newNotification('Blog removed Successfully', 'success');
+      } catch (exception) {
+        newNotification('Removing the blog failed!', 'error');
+      }
+    }
+  };
+
+  return { handleCreateBlog, handleNewLike, handleRemove };
 };
 
 export default BlogMutations;
