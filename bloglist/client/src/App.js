@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import blogService from './services/blogs';
+import blogService, { getAll, setToken } from './services/blogs';
 import { handleLogout } from './services/users';
 
 import NotificationContext from './shared/NotificationContext';
@@ -31,7 +31,7 @@ const App = () => {
   // fetch blogs:
   const { data: blogsQuery, refetch: refetchBlogs } = useQuery({
     queryKey: ['blogs'],
-    queryFn: blogService.getAll,
+    queryFn: getAll,
   });
 
   const blogs = blogsQuery || [];
@@ -42,7 +42,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
-      blogService.setToken(user.token);
+      setToken(user.token);
     }
   }, []);
 
@@ -77,17 +77,6 @@ const App = () => {
     }
   };
 
-  const handleCreateBlog = async (newBlog) => {
-    try {
-      await blogService.createBlog(newBlog);
-      refetchBlogs();
-      newNotification('New blog created!', 'success');
-    } catch (exception) {
-      console.log(exception);
-      newNotification('Creating a new blog failed!', 'error');
-    }
-  };
-
   if (!user) {
     return (
       <div>
@@ -112,7 +101,8 @@ const App = () => {
       <button onClick={() => handleLogout(setUser, newNotification)}>Logout</button>
       <Togglable buttonLabel='Create blog' ref={blogFormRef}>
         <CreateBlog
-          handleCreateBlog={handleCreateBlog}
+          newNotification={newNotification}
+          refetchBlogs={refetchBlogs}
           toggleVisibility={() => blogFormRef.current.toggleVisibility()}
         />
       </Togglable>
