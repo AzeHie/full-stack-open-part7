@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useEffect, useRef, useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import { getAll, setToken } from './services/blogs';
@@ -13,10 +13,11 @@ import Togglable from './shared/Togglable';
 import LoginForm from './components/LoginForm';
 
 import './App.css';
+import UsersContext from './shared/UsersContext';
 
 const App = () => {
   const blogFormRef = useRef();
-  const [user, setUser] = useState();
+  const [user, userDispatch] = useContext(UsersContext);
   const [notification, notificationDispatch] = useContext(NotificationContext);
 
   // create notification
@@ -41,7 +42,7 @@ const App = () => {
     const loggedUserJSON = localStorage.getItem('loggedUser');
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
-      setUser(user);
+      userDispatch({ type: 'LOGIN', payload: user });
       setToken(user.token);
     }
   }, []);
@@ -54,7 +55,10 @@ const App = () => {
           message={notification.message}
           styles={notification.styles}
         />
-        <LoginForm setUser={setUser} newNotification={newNotification} />
+        <LoginForm
+          userDispatch={userDispatch}
+          newNotification={newNotification}
+        />
       </div>
     );
   }
@@ -67,7 +71,9 @@ const App = () => {
         styles={notification.styles}
       />
       <span>{user.name} logged in</span>
-      <button onClick={() => handleLogout(setUser, newNotification)}>Logout</button>
+      <button onClick={() => handleLogout(userDispatch, newNotification)}>
+        Logout
+      </button>
       <Togglable buttonLabel='Create blog' ref={blogFormRef}>
         <CreateBlog
           newNotification={newNotification}

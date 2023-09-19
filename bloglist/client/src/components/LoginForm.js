@@ -1,14 +1,14 @@
 import { Fragment, useState } from 'react';
 import { handleLogin } from '../services/users';
 
-const LoginForm = ({ setUser, newNotification }) => {
+const LoginForm = ({ userDispatch, newNotification }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const login = (event) => {
     event.preventDefault();
 
-    handleLogin(username, password, setUser, newNotification);
+    handleLogin(username, password, userDispatch, newNotification);
   };
 
   return (

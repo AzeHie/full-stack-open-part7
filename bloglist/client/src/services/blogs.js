@@ -16,7 +16,6 @@ export const setToken = (newToken) => {
 
 export const getAll = async () => {
   const request = await axios.get(baseUrl);
-  console.log('in getall: ', request.data);
 
   return request.data;
 };
@@ -66,7 +65,6 @@ const BlogMutations = () => {
       newBlogMutation.mutate(newBlog);
       newNotification('New blog created!', 'success');
     } catch (exception) {
-      console.log(exception);
       newNotification('Creating a new blog failed!', 'error');
     }
   };

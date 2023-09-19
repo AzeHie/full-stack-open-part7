@@ -1,5 +1,3 @@
-// USEREDUCER OTETTU KÄYTTÖÖN, SIIRRÄ SE OMAAN TIEDOSTOON JA SET UP CONTEXT FOR NOTIFICAION!!
-
 import { createContext, useReducer } from 'react';
 
 const initialNotification = {
