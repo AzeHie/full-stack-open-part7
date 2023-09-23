@@ -1,6 +1,8 @@
 import { Fragment, useState } from 'react';
 import { handleLogin } from '../services/users';
 
+import './LoginForm.css';
+
 const LoginForm = ({ userDispatch, newNotification }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');

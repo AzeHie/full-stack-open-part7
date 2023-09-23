@@ -1,14 +1,20 @@
 import axios from 'axios';
 import { setToken } from './blogs';
 
-const baseUrl = '/api/login';
+const loginUrl = '/api/login';
+const usersUrl = '/api/users';
 
 const login = async (username, password) => {
-  const res = await axios.post(baseUrl, { username, password });
+  const res = await axios.post(loginUrl, { username, password });
   return res.data;
 };
 
-export default { login };
+const fetchUsers = async () => {
+  const res = await axios.get(usersUrl);
+  return res.data;
+};
+
+export default { login, fetchUsers };
 
 export const handleLogin = async (
   username,
