@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query';
 import NotificationContext from './shared/NotificationContext';
 import UsersContext from './shared/UsersContext';
 import { setToken, getAll } from './services/blogs';
-import { handleLogout } from './services/users';
 import usersService from './services/users';
 
 import CreateBlog from './components/CreateBlog';
@@ -15,6 +14,7 @@ import SingleUser from './components/SingleUser';
 import SingleBlog from './components/SingleBlog';
 import BlogsList from './components/BlogsList';
 import LoginForm from './components/LoginForm';
+import MainNavigation from './components/MainNavigation';
 
 const App = () => {
   const [user, userDispatch] = useContext(UsersContext);
@@ -63,53 +63,56 @@ const App = () => {
     : null;
 
   const blogMatch = useMatch('/blogs/:id');
-  const matchingBlog = blogMatch ? blogs.find((blog) => blog.id === blogMatch.params.id) : null;
+  const matchingBlog = blogMatch
+    ? blogs.find((blog) => blog.id === blogMatch.params.id)
+    : null;
 
   const routes = (
     <Routes>
       <Route
         path='/'
-        element={<BlogsList blogs={blogs} newNotification={newNotification} user={user} />}
+        element={
+          <BlogsList
+            blogs={blogs}
+            newNotification={newNotification}
+            user={user}
+          />
+        }
       />
       <Route
         path='/createblog'
         element={<CreateBlog newNotification={newNotification} />}
       />
-      <Route path='/blogs/:id' element={<SingleBlog blog={matchingBlog} user={user} />} />
+      <Route
+        path='/blogs/:id'
+        element={<SingleBlog blog={matchingBlog} user={user} />}
+      />
       <Route path='/users' element={<UsersList users={users} />} />
       <Route path='/users/:id' element={<SingleUser user={matchingUser} />} />
     </Routes>
   );
 
-  if (!user) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <LoginForm
-          userDispatch={userDispatch}
-          newNotification={newNotification}
-        />
-      </div>
-    );
-  }
-
   return (
     <Fragment>
+      <MainNavigation
+        user={user}
+        newNotification={newNotification}
+        userDispatch={userDispatch}
+      />
       <h2>blogs</h2>
       <Notification
         message={notification.message}
         styles={notification.styles}
       />
-      {user && (
+      {!user && (
         <div>
-          <span>{user.name} logged in</span>
-          <br />
-          <button onClick={() => handleLogout(userDispatch, newNotification)}>
-            Logout
-          </button>
+          <h2>Log in to application</h2>
+          <LoginForm
+            userDispatch={userDispatch}
+            newNotification={newNotification}
+          />
         </div>
       )}
-
       <main>{routes}</main>
     </Fragment>
   );

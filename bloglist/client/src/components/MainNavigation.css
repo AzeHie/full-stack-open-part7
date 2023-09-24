@@ -1,0 +1,22 @@
+.MainNavigation__toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.MainNavigation__links {
+  display: flex;
+}
+
+.MainNavigation__link {
+  padding: 5px;
+  color: white;
+  text-decoration: none;
+}
+
+.MainNavigation__user-details {
+  display: flex;
+}
+
+.MainNavigation__user-details button {
+  margin-left: 5px;
+}
