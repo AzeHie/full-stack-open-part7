@@ -1,9 +1,10 @@
 import { Fragment, useContext, useEffect, useState } from 'react';
 import { Route, Routes, useMatch } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
 import NotificationContext from './shared/NotificationContext';
 import UsersContext from './shared/UsersContext';
-import { setToken } from './services/blogs';
+import { setToken, getAll } from './services/blogs';
 import { handleLogout } from './services/users';
 import usersService from './services/users';
 
@@ -11,7 +12,9 @@ import CreateBlog from './components/CreateBlog';
 import Notification from './shared/Notification';
 import UsersList from './components/UsersList';
 import SingleUser from './components/SingleUser';
-import MainPage from './pages/MainPage';
+import SingleBlog from './components/SingleBlog';
+import BlogsList from './components/BlogsList';
+import LoginForm from './components/LoginForm';
 
 const App = () => {
   const [user, userDispatch] = useContext(UsersContext);
@@ -46,31 +49,49 @@ const App = () => {
     loadUsers();
   }, []);
 
-  const match = useMatch('/users/:id');
-  const userMatch = match
-    ? users.find((user) => user.id === match.params.id)
+  // fetch blogs
+  const { data: blogsQuery } = useQuery({
+    queryKey: ['blogs'],
+    queryFn: getAll,
+  });
+
+  const blogs = blogsQuery || [];
+
+  const userMatch = useMatch('/users/:id');
+  const matchingUser = userMatch
+    ? users.find((user) => user.id === userMatch.params.id)
     : null;
+
+  const blogMatch = useMatch('/blogs/:id');
+  const matchingBlog = blogMatch ? blogs.find((blog) => blog.id === blogMatch.params.id) : null;
 
   const routes = (
     <Routes>
       <Route
         path='/'
-        element={
-          <MainPage
-            newNotification={newNotification}
-            user={user}
-            userDispatch={userDispatch}
-          />
-        }
+        element={<BlogsList blogs={blogs} newNotification={newNotification} user={user} />}
       />
       <Route
         path='/createblog'
         element={<CreateBlog newNotification={newNotification} />}
       />
+      <Route path='/blogs/:id' element={<SingleBlog blog={matchingBlog} user={user} />} />
       <Route path='/users' element={<UsersList users={users} />} />
-      <Route path='/users/:id' element={<SingleUser user={userMatch} />} />
+      <Route path='/users/:id' element={<SingleUser user={matchingUser} />} />
     </Routes>
   );
+
+  if (!user) {
+    return (
+      <div>
+        <h2>Log in to application</h2>
+        <LoginForm
+          userDispatch={userDispatch}
+          newNotification={newNotification}
+        />
+      </div>
+    );
+  }
 
   return (
     <Fragment>
