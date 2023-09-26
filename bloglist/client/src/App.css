@@ -1,0 +1,8 @@
+.app__container {
+  width: 98%;
+  margin: auto;
+  background: rgb(233, 233, 233);
+  border-radius: 1%;
+  padding: 15px;
+  margin-top: 80px;
+}

@@ -7,6 +7,7 @@
   display: flex;
 }
 
+.MainNavigation__app-title,
 .MainNavigation__link {
   padding: 5px;
   color: white;
@@ -15,6 +16,7 @@
 
 .MainNavigation__user-details {
   display: flex;
+  min-width: 100px;
 }
 
 .MainNavigation__user-details button {

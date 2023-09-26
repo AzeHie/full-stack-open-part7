@@ -34,6 +34,15 @@ const editBlog = async (newBlog) => {
   return response.data;
 };
 
+const addComment = async (commentData) => {
+  const response = await axios.post(
+    `${baseUrl}/${commentData.blogId}/comments`,
+    commentData,
+    getConfig()
+  );
+  return response.data;
+};
+
 export const removeBlog = async (blogId) => {
   const response = await axios.delete(`${baseUrl}/${blogId}`, getConfig());
   return response.data;
@@ -51,13 +60,19 @@ const BlogMutations = () => {
   const newLikeMutation = useMutation(editBlog, {
     onSuccess: () => {
       QueryClient.invalidateQueries({ queryKey: ['blogs'] });
-    }
+    },
+  });
+
+  const addCommentMutation = useMutation(addComment, {
+    onSuccess: () => {
+      QueryClient.invalidateQueries({ queryKey: ['blogs'] });
+    },
   });
 
   const removeBlogMutation = useMutation(removeBlog, {
     onSuccess: () => {
       QueryClient.invalidateQueries({ queryKey: ['blogs'] });
-    }
+    },
   });
 
   const handleCreateBlog = async (newBlog, newNotification) => {
@@ -92,7 +107,15 @@ const BlogMutations = () => {
     }
   };
 
-  return { handleCreateBlog, handleNewLike, handleRemove };
+  const handleNewComment = async (blogId, comment, newNotification) => {
+    try {
+      addCommentMutation.mutate({ blogId, comment });
+    } catch (exception) {
+      newNotification('Adding a comment failed!', 'error');
+    }
+  };
+
+  return { handleCreateBlog, handleNewLike, handleRemove, handleNewComment };
 };
 
 export default BlogMutations;

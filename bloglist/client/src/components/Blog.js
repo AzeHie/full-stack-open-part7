@@ -3,7 +3,7 @@ import './Blog.css';
 
 const Blog = ({ blog }) => {
   return (
-    <Link to={`/blogs/${blog.id}`}>
+    <Link className='blog__link' to={`/blogs/${blog.id}`}>
       <div className='blog__title'>
         {blog.title} by {blog.author}
       </div>

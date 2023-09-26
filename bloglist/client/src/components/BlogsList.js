@@ -7,6 +7,7 @@ const BlogsList = ({ blogs, newNotification, user }) => {
 
   return (
     <div>
+      <h2 style={{ color: 'darkblue' }}>List of blogs:</h2>
       {blogs.map((blog) => (
         <Blog
           key={blog.id}

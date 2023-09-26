@@ -80,4 +80,29 @@ blogsRouter.put('/:id', userExtractor, async (req, res, next) => {
   }
 });
 
+blogsRouter.post('/:id/comments', userExtractor, async (req, res, next) => {
+  const id = req.params.id;
+  const comment = req.body.comment;
+  
+  try {
+    const blog = await Blog.findById(id);
+
+    if(!blog) {
+      return res.status(404).json({ message: 'Blog not found ' });
+    }
+
+    // if blog was added before "comment-update"
+    if(!blog.comments) {
+      blog.comments = [];
+    }
+
+    blog.comments.push(comment);
+
+    const updatedBlog = await blog.save();
+    res.status(201).json(updatedBlog);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = blogsRouter;

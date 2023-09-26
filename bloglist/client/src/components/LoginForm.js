@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { handleLogin } from '../services/users';
 
 import './LoginForm.css';
@@ -14,7 +14,8 @@ const LoginForm = ({ userDispatch, newNotification }) => {
   };
 
   return (
-    <Fragment>
+    <div className='login__container'>
+      <h2>Log in to application</h2>
       <form onSubmit={login}>
         <div className='login__inputs'>
           <label htmlFor='username'>Username:</label>
@@ -40,7 +41,7 @@ const LoginForm = ({ userDispatch, newNotification }) => {
           Login
         </button>
       </form>
-    </Fragment>
+    </div>
   );
 };
 

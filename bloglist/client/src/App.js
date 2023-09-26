@@ -16,9 +16,12 @@ import BlogsList from './components/BlogsList';
 import LoginForm from './components/LoginForm';
 import MainNavigation from './components/MainNavigation';
 
+import './App.css';
+
 const App = () => {
   const [user, userDispatch] = useContext(UsersContext);
   const [users, setUsers] = useState([]);
+  console.log('app rendered', user);
 
   const [notification, notificationDispatch] = useContext(NotificationContext);
 
@@ -85,7 +88,9 @@ const App = () => {
       />
       <Route
         path='/blogs/:id'
-        element={<SingleBlog blog={matchingBlog} user={user} />}
+        element={
+          <SingleBlog blog={matchingBlog} newNotification={newNotification} />
+        }
       />
       <Route path='/users' element={<UsersList users={users} />} />
       <Route path='/users/:id' element={<SingleUser user={matchingUser} />} />
@@ -99,21 +104,21 @@ const App = () => {
         newNotification={newNotification}
         userDispatch={userDispatch}
       />
-      <h2>blogs</h2>
-      <Notification
-        message={notification.message}
-        styles={notification.styles}
-      />
-      {!user && (
-        <div>
-          <h2>Log in to application</h2>
-          <LoginForm
-            userDispatch={userDispatch}
-            newNotification={newNotification}
-          />
-        </div>
-      )}
-      <main>{routes}</main>
+      <div className='app__container'>
+        <Notification
+          message={notification.message}
+          styles={notification.styles}
+        />
+        {!user && (
+          <div>
+            <LoginForm
+              userDispatch={userDispatch}
+              newNotification={newNotification}
+            />
+          </div>
+        )}
+        <main>{routes}</main>
+      </div>
     </Fragment>
   );
 };
