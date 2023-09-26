@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 
+import './Userslist.css';
+
 const UsersList = ({ users }) => {
   return (
-    <div>
+    <div className='UsersList__container'>
       <table>
         <thead>
           <tr>
@@ -15,9 +17,9 @@ const UsersList = ({ users }) => {
             <tr key={user.id}>
               <td>
                 {' '}
-                <Link to={`/users/${user.id}`}>{user.name} </Link>
+                <Link className='UsersList__link' to={`/users/${user.id}`}>{user.name} </Link>
               </td>
-              <td>{user.blogs.length}</td>
+              <td className='UsersList__td2'>{user.blogs.length}</td>
             </tr>
           ))}
         </tbody>

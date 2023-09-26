@@ -1,0 +1,40 @@
+.UsersList__container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.UsersList__container table {
+  width: 90%;
+  border: 1px solid black;
+  border-collapse: collapse;
+  background: rgb(190, 214, 255);
+}
+
+.UsersList__container th {
+  color: darkblue;
+  font-size: larger;
+  border: 1px solid black;
+  background: rgb(151, 189, 255);
+  padding: 3px;
+}
+
+.UsersList__container td {
+  border: 1px solid black;
+  padding: 3px;
+}
+
+.UsersList__td2 {
+  text-align: center;
+}
+
+.UsersList__link {
+  margin-left: 5px;
+  text-decoration: none;
+  color: black;
+}
+
+.UsersList__link:hover {
+  color: white;
+}
+
